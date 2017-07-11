@@ -20,9 +20,9 @@ import java.util.Map;
 
 public abstract class GTJavaBase1xImpl extends GTJavaBase {
 
-    private MessageTranslator messageTranslator;
+    private MessageResolver messageResolver;
 
-    public GTJavaBase1xImpl(Class<? extends GTGroovyBase> groovyClass, GTTemplateLocation templateLocation) throws IllegalAccessException, InstantiationException {
+    public GTJavaBase1xImpl(Class<? extends GTGroovyBase> groovyClass, GTTemplateLocation templateLocation) {
         super(groovyClass, templateLocation);
     }
 
@@ -51,19 +51,19 @@ public abstract class GTJavaBase1xImpl extends GTJavaBase {
 
     @Override
     protected String resolveMessage(Object key, Object[] args) {
-        if (messageTranslator == null) {
-            messageTranslator = createMessageTranslator();
+        if (messageResolver == null) {
+            messageResolver = createMessageResolver();
         }
         Locale locale = Lang.getLocale();
-        if (messageTranslator.supports(locale)) {
-            return messageTranslator.translate(locale, key, args);
+        if (messageResolver.supports(locale)) {
+            return messageResolver.resolve(key, args);
         }
         return Messages.get(key, args);
     }
 
-    private MessageTranslator createMessageTranslator() {
+    private MessageResolver createMessageResolver() {
         try {
-            return (MessageTranslator) Play.classes.getAssignableClasses(MessageTranslator.class).stream().findFirst().get().javaClass.newInstance();
+            return (MessageResolver) Play.classes.getAssignableClasses(MessageResolver.class).stream().findFirst().get().javaClass.newInstance();
         } catch (Exception e) {
             throw new IllegalStateException("Unable to find message translator implementation.");
         }

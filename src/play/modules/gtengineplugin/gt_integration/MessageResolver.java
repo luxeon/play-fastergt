@@ -2,9 +2,9 @@ package play.modules.gtengineplugin.gt_integration;
 
 import java.util.Locale;
 
-public interface MessageTranslator {
+public interface MessageResolver {
 
-    String translate(Locale to, Object key, Object[] args);
+    String resolve(Object key, Object[] args);
 
     boolean supports(Locale locale);
 }
