@@ -1,7 +1,5 @@
 package play.modules.gtengineplugin.gt_integration;
 
-import static play.i18n.Lang.getLocale;
-
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -12,7 +10,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import play.Play;
 import play.cache.Cache;
 import play.data.validation.Validation;
-import play.i18n.Messages;
 import play.mvc.Router;
 import play.template2.GTGroovyBase;
 import play.template2.GTJavaBase;
@@ -57,10 +54,7 @@ public abstract class GTJavaBase1xImpl extends GTJavaBase {
 
     @Override
     protected String resolveMessage(Object key, Object[] args) {
-        if (messageResolver.supports(getLocale())) {
-            return messageResolver.resolve(key, args);
-        }
-        return Messages.get(key, args);
+        return messageResolver.resolve(key, args);
     }
 
     @Override
