@@ -1,10 +1,17 @@
 package play.modules.gtengineplugin.gt_integration;
 
+import static play.i18n.Lang.getLocale;
+
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringEscapeUtils;
+
 import play.Play;
 import play.cache.Cache;
 import play.data.validation.Validation;
-import play.i18n.Lang;
 import play.i18n.Messages;
 import play.mvc.Router;
 import play.template2.GTGroovyBase;
@@ -15,12 +22,11 @@ import play.template2.exceptions.GTTemplateNotFoundWithSourceInfo;
 import play.templates.BaseTemplate;
 import play.utils.HTML;
 
-import java.util.Locale;
-import java.util.Map;
-
+@Named
 public abstract class GTJavaBase1xImpl extends GTJavaBase {
 
-    private MessageResolver messageResolver;
+    @Inject
+    private static MessageResolver messageResolver;
 
     public GTJavaBase1xImpl(Class<? extends GTGroovyBase> groovyClass, GTTemplateLocation templateLocation) {
         super(groovyClass, templateLocation);
@@ -51,24 +57,11 @@ public abstract class GTJavaBase1xImpl extends GTJavaBase {
 
     @Override
     protected String resolveMessage(Object key, Object[] args) {
-        if (messageResolver == null) {
-            messageResolver = createMessageResolver();
-        }
-        Locale locale = Lang.getLocale();
-        if (messageResolver.supports(locale)) {
+        if (messageResolver.supports(getLocale())) {
             return messageResolver.resolve(key, args);
         }
         return Messages.get(key, args);
     }
-
-    private MessageResolver createMessageResolver() {
-        try {
-            return (MessageResolver) Play.classes.getAssignableClasses(MessageResolver.class).stream().findFirst().get().javaClass.newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to find message translator implementation.");
-        }
-    }
-
 
     @Override
     public Class getRawDataClass() {
@@ -96,7 +89,8 @@ public abstract class GTJavaBase1xImpl extends GTJavaBase {
     }
 
     @Override
-    public void internalRenderTemplate(Map<String, Object> args, boolean startingNewRendering, GTJavaBase callingTemplate) throws GTTemplateNotFoundWithSourceInfo, GTRuntimeException {
+    public void internalRenderTemplate(Map<String, Object> args, boolean startingNewRendering, GTJavaBase callingTemplate)
+        throws GTTemplateNotFoundWithSourceInfo, GTRuntimeException {
         // make sure the old layoutData referees to the same in map-instance as what the new impl uses
         BaseTemplate.layoutData.set(GTJavaBase.layoutData.get());
         super.internalRenderTemplate(args, startingNewRendering, callingTemplate);
@@ -111,6 +105,5 @@ public abstract class GTJavaBase1xImpl extends GTJavaBase {
     public void cacheSet(String key, Object data, String duration) {
         Cache.set(key, data, duration);
     }
-
 
 }
