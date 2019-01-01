@@ -5,6 +5,7 @@ import play.Play;
 import play.cache.Cache;
 import play.data.validation.Validation;
 import play.i18n.Messages;
+import play.modules.gtengineplugin.TemplateMessageSource;
 import play.mvc.Router;
 import play.template2.GTGroovyBase;
 import play.template2.GTJavaBase;
@@ -14,9 +15,15 @@ import play.template2.exceptions.GTTemplateNotFoundWithSourceInfo;
 import play.templates.BaseTemplate;
 import play.utils.HTML;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Map;
 
+@Named
 public abstract class GTJavaBase1xImpl extends GTJavaBase {
+
+    @Inject
+    private static TemplateMessageSource messageSource;
 
     public GTJavaBase1xImpl(Class<? extends GTGroovyBase> groovyClass, GTTemplateLocation templateLocation) {
         super(groovyClass, templateLocation);
@@ -47,7 +54,7 @@ public abstract class GTJavaBase1xImpl extends GTJavaBase {
 
     @Override
     protected String resolveMessage(Object key, Object[] args) {
-        return Messages.get(key, args);
+        return messageSource.get(key, args);
     }
 
     @Override
