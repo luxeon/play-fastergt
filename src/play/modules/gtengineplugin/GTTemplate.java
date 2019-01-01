@@ -8,27 +8,28 @@ import play.exceptions.TemplateCompilationException;
 import play.exceptions.TemplateExecutionException;
 import play.exceptions.TemplateNotFoundException;
 import play.i18n.Lang;
-import play.i18n.Messages;
+import play.inject.RequireInjection;
 import play.mvc.Http;
 import play.template2.GTJavaBase;
 import play.template2.GTRenderingResult;
 import play.template2.GTTemplateLocation;
 import play.template2.GTTemplateLocationReal;
-import play.template2.exceptions.GTAppClassException;
-import play.template2.exceptions.GTCompilationExceptionWithSourceInfo;
-import play.template2.exceptions.GTRuntimeException;
-import play.template2.exceptions.GTRuntimeExceptionWithSourceInfo;
-import play.template2.exceptions.GTTemplateNotFoundWithSourceInfo;
+import play.template2.exceptions.*;
 import play.templates.Template;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+@RequireInjection
 public class GTTemplate extends Template {
 
     private final GTTemplateLocation templateLocation;
     private final GTJavaBase gtJavaBase;
+
+    @Inject
+    private static TemplateMessageSource messageSource;
 
     public GTTemplate(GTTemplateLocation templateLocation, GTJavaBase gtJavaBase) {
         this.templateLocation = templateLocation;
@@ -69,7 +70,7 @@ public class GTTemplate extends Template {
             args.put("_response_encoding", currentResponse.encoding);
         }
         args.put("play", new Play());
-        args.put("messages", new Messages());
+        args.put("messages", messageSource);
         args.put("lang", Lang.get());
 
         return renderGTTemplate(args);
