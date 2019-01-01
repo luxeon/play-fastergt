@@ -6,7 +6,7 @@ import play.templates.Template;
 import play.vfs.VirtualFile;
 
 public class GTEnginePlugin extends PlayPlugin {
-    
+
     // This module contains new (fixed) versions of some templates
     // This list is used to ignore the original
     private String[] relativePathsToIgnore = new String[]{
@@ -16,7 +16,7 @@ public class GTEnginePlugin extends PlayPlugin {
             "{module:crud}/"
     };
 
-    synchronized private void init() {
+    private synchronized void init() {
         fixTemplatesPathOrder();
         TemplateLoader.init();
     }
@@ -56,7 +56,7 @@ public class GTEnginePlugin extends PlayPlugin {
 
     @Override
     public Template loadTemplate(VirtualFile file) {
-        
+
         // Some templates are bundled with this module - fixed versions
         // Must check if we are requesting such template - and then ignore it..
         // This only happens when scanning for templates when precompiling
@@ -72,6 +72,5 @@ public class GTEnginePlugin extends PlayPlugin {
         }
 
         return TemplateLoader.load(file);
-
     }
 }

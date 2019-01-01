@@ -1,4 +1,4 @@
-self: play -> fastergt 1.9.2
+self: play -> fastergt 1.10-patched
 
 require:
-    - play 1.5.*
+    - play 1.5.+
