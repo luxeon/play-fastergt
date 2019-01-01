@@ -13,7 +13,6 @@ import play.mvc.Http;
 import play.template2.GTJavaBase;
 import play.template2.GTRenderingResult;
 import play.template2.GTTemplateLocation;
-import play.template2.GTTemplateLocationReal;
 import play.template2.exceptions.*;
 import play.templates.Template;
 
@@ -78,7 +77,7 @@ public class GTTemplate extends Template {
 
     protected GTJavaBase getGTTemplateInstance() {
         if ( gtJavaBase == null) {
-            return TemplateLoader.getGTTemplateInstance((GTTemplateLocationReal)templateLocation);
+            return TemplateLoader.getGTTemplateInstance(templateLocation);
         } else {
             return gtJavaBase;
         }
@@ -128,7 +127,7 @@ public class GTTemplate extends Template {
     public String render(Map<String, Object> args) {
         return internalRender(args);
     }
-    
+
     public void loadSource() {
         if ( source == null) {
             source = templateLocation.readSource();

@@ -9,3 +9,4 @@ tmp
 dist
 precompiled
 atlassian-ide-plugin.xml
+lib/play-faster-groovy-templates*.jar

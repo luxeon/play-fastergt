@@ -12,15 +12,15 @@ import java.util.List;
 public class GTFastTagResolver1x implements GTFastTagResolver {
 
     private static final Object lock = new Object();
-    private static ApplicationClassloaderState _lastKnownApplicationClassloaderState = null;
-    private static List<GTFastTag> fastTagClasses = null;
+    private static ApplicationClassloaderState _lastKnownApplicationClassloaderState;
+    private static List<GTFastTag> fastTagClasses;
 
-    public String resolveFastTag(String tagName) {
+    @Override public String resolveFastTag(String tagName) {
 
         synchronized (lock) {
             if (_lastKnownApplicationClassloaderState == null || !_lastKnownApplicationClassloaderState.equals(Play.classloader.currentState) || fastTagClasses == null) {
                 _lastKnownApplicationClassloaderState = Play.classloader.currentState;
-                fastTagClasses = new ArrayList<GTFastTag>();
+                fastTagClasses = new ArrayList<>();
                 for (ApplicationClasses.ApplicationClass appClass : Play.classes.getAssignableClasses( GTFastTag.class ) ) {
                     try {
                         fastTagClasses.add( (GTFastTag)appClass.javaClass.newInstance());
@@ -34,11 +34,9 @@ public class GTFastTagResolver1x implements GTFastTagResolver {
         for ( GTFastTag fastTag : fastTagClasses) {
             String res = fastTag.resolveFastTag( tagName);
             if ( res != null) {
-                // found a match
                 return res;
             }
         }
-        // no match found..
         return null;
     }
 }

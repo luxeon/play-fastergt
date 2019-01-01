@@ -14,9 +14,10 @@ import java.util.Map;
 public class GTJavaExtensionMethodResolver1x implements GTJavaExtensionMethodResolver {
 
     private static final Object lock = new Object();
-    private static ApplicationClassloaderState _lastKnownApplicationClassloaderState = null;
-    private static Map<String, Class> methodName2ClassMapping = null;
+    private static ApplicationClassloaderState _lastKnownApplicationClassloaderState;
+    private static Map<String, Class> methodName2ClassMapping;
 
+    @Override
     public Class findClassWithMethod(String methodName) {
         synchronized (lock) {
             if (_lastKnownApplicationClassloaderState == null || !_lastKnownApplicationClassloaderState.equals(Play.classloader.currentState) || methodName2ClassMapping == null) {

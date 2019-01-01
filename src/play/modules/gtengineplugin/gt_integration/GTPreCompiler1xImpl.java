@@ -10,9 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GTPreCompiler1xImpl extends GTPreCompiler {
-
-
-    private GTLegacyFastTagResolver legacyFastTagResolver = new GTLegacyFastTagResolver1X();
+    private final GTLegacyFastTagResolver legacyFastTagResolver = new GTLegacyFastTagResolver1X();
 
     public GTPreCompiler1xImpl(GTTemplateRepo templateRepo) {
         super(templateRepo);
@@ -28,8 +26,8 @@ public class GTPreCompiler1xImpl extends GTPreCompiler {
         if (tagArgs.indexOf('@')>=0) {
             tagArgs = tagArgs.replaceAll("[:]\\s*[@]{2}", ":actionBridge._abs().");
             tagArgs = tagArgs.replaceAll("(\\s)[@]{2}", "$1actionBridge._abs().");
-            tagArgs = tagArgs.replaceAll("[:]\\s*[@]{1}", ":actionBridge.");
-            tagArgs = tagArgs.replaceAll("(\\s)[@]{1}", "$1actionBridge.");
+            tagArgs = tagArgs.replaceAll("[:]\\s*[@]", ":actionBridge.");
+            tagArgs = tagArgs.replaceAll("(\\s)[@]", "$1actionBridge.");
         }
         return tagArgs;
     }
@@ -52,7 +50,7 @@ public class GTPreCompiler1xImpl extends GTPreCompiler {
 
             // actionBridge is a special groovy object that will be an object present in the groovy runtime.
             // we must create a groovy method that execute this special groovy actionBridge-hack code, then
-            // we return the java code snipit that will get the result from the groovy method, then print the result
+            // we return the java code snippet that will get the result from the groovy method, then print the result
 
             // generate groovy code
             String groovyMethodName = "action_resolver_" + (sc.nextMethodIndex++);

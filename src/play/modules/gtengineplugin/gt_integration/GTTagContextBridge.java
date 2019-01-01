@@ -5,7 +5,7 @@ import play.templates.TagContext;
 
 import java.util.Map;
 
-// Briding so that it is the TagContext-impl in play 1 that is the master one..
+// Bridging so that it is the TagContext-impl in play 1 that is the master one..
 public class GTTagContextBridge extends GTTagContext {
 
     public static class GTTagContextInfoBridge implements GTTagContextInfo {

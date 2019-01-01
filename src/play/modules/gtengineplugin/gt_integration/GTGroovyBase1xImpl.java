@@ -25,7 +25,7 @@ public class GTGroovyBase1xImpl extends GTGroovyBase {
     @Override
     public Object getProperty(String property) {
         try {
-            if (property.equals("actionBridge")) {
+            if ("actionBridge".equals(property)) {
                 // special object used to resolving actions
                 GTJavaBase template = (GTJavaBase)super.getProperty("java_class");
                 return new ActionBridge(template.templateLocation.relativePath);
@@ -47,9 +47,9 @@ public class GTGroovyBase1xImpl extends GTGroovyBase {
 
     public static class ActionBridge extends GroovyObjectSupport {
 
-        String templateName = null;
-        String controller = null;
-        boolean absolute = false;
+        String templateName;
+        String controller;
+        boolean absolute;
 
         public ActionBridge(String templateName, String controllerPart, boolean absolute) {
             this.templateName = templateName;
@@ -71,44 +71,6 @@ public class GTGroovyBase1xImpl extends GTGroovyBase {
             return this;
         }
 
-        private Integer computeMethodHash(Class<?>[] parameters) {
-            String[] names = new String[parameters.length];
-            for (int i = 0; i < parameters.length; i++) {
-                Class<?> param = parameters[i];
-                names[i] = "";
-                if (param.isArray()) {
-                    int level = 1;
-                    param = param.getComponentType();
-                    // Array of array
-                    while (param.isArray()) {
-                        level++;
-                        param = param.getComponentType();
-                    }
-                    names[i] = param.getName();
-                    for (int j = 0; j < level; j++) {
-                        names[i] += "[]";
-                    }
-                } else {
-                    names[i] = param.getName();
-                }
-            }
-            return computeMethodHash(names);
-        }
-
-        private Integer computeMethodHash(String[] parameters) {
-            StringBuffer buffer = new StringBuffer();
-            for (String param : parameters) {
-                buffer.append(param);
-            }
-            Integer hash = buffer.toString().hashCode();
-            if (hash < 0) {
-                return -hash;
-            }
-            return hash;
-        }
-
-
-
         @Override
         @SuppressWarnings("unchecked")
         public Object invokeMethod(String name, Object param) {
@@ -122,13 +84,14 @@ public class GTGroovyBase1xImpl extends GTGroovyBase {
                         action = action.substring(0, action.length() - 5);
                     }
                     try {
-                        Map<String, Object> r = new HashMap<String, Object>();
+                        Map<String, Object> r = new HashMap<>();
                         Method actionMethod = (Method) ActionInvoker.getActionMethod(action)[1];
                         String[] names = Java.parameterNames(actionMethod);
                         if (param instanceof Object[]) {
-                            if(((Object[])param).length == 1 && ((Object[])param)[0] instanceof Map) {
-                                r = (Map<String,Object>)((Object[])param)[0];
-                            } else {
+                            if (((Object[]) param).length == 1 && ((Object[]) param)[0] instanceof Map) {
+                                r = (Map<String, Object>) ((Object[]) param)[0];
+                            }
+                            else {
                                 // too many parameters versus action, possibly a developer error. we must warn him.
                                 if (names.length < ((Object[]) param).length) {
                                     throw new NoRouteFoundException(action, null);
@@ -136,11 +99,13 @@ public class GTGroovyBase1xImpl extends GTGroovyBase {
                                 for (int i = 0; i < ((Object[]) param).length; i++) {
                                     if (((Object[]) param)[i] instanceof Router.ActionDefinition && ((Object[]) param)[i] != null) {
                                         Unbinder.unBind(r, ((Object[]) param)[i].toString(), i < names.length ? names[i] : "", actionMethod.getAnnotations());
-                                    } else if (isSimpleParam(actionMethod.getParameterTypes()[i])) {
+                                    }
+                                    else if (isSimpleParam(actionMethod.getParameterTypes()[i])) {
                                         if (((Object[]) param)[i] != null) {
                                             Unbinder.unBind(r, ((Object[]) param)[i].toString(), i < names.length ? names[i] : "", actionMethod.getAnnotations());
                                         }
-                                    } else {
+                                    }
+                                    else {
                                         Unbinder.unBind(r, ((Object[]) param)[i], i < names.length ? names[i] : "", actionMethod.getAnnotations());
                                     }
                                 }
@@ -154,13 +119,13 @@ public class GTGroovyBase1xImpl extends GTGroovyBase {
                             def.url = def.url.replace("&", "&amp;");
                         }
                         return def;
-                    } catch (ActionNotFoundException e) {
+                    }
+                    catch (ActionNotFoundException e) {
                         throw new NoRouteFoundException(action, null);
                     }
+                } catch (PlayException e) {
+                    throw e;
                 } catch (Exception e) {
-                    if (e instanceof PlayException) {
-                        throw (PlayException) e;
-                    }
                     throw new UnexpectedException(e);
                 }
             } catch (Exception e) {

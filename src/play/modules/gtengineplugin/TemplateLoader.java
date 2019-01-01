@@ -9,14 +9,7 @@ import play.modules.gtengineplugin.gt_integration.GTFileResolver1xImpl;
 import play.modules.gtengineplugin.gt_integration.GTJavaExtensionMethodResolver1x;
 import play.modules.gtengineplugin.gt_integration.GTTagContextBridge;
 import play.modules.gtengineplugin.gt_integration.PreCompilerFactory;
-import play.template2.GTFileResolver;
-import play.template2.GTJavaBase;
-import play.template2.GTTagContext;
-import play.template2.GTTemplateInstanceFactoryLive;
-import play.template2.GTTemplateLocation;
-import play.template2.GTTemplateLocationReal;
-import play.template2.GTTemplateLocationWithEmbeddedSource;
-import play.template2.GTTemplateRepo;
+import play.template2.*;
 import play.template2.compile.GTCompiler;
 import play.template2.compile.GTGroovyPimpTransformer;
 import play.template2.compile.GTJavaCompileToClass;
@@ -31,18 +24,11 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Load templates
- */
 public class TemplateLoader {
 
     private static GTTemplateRepo templateRepo;
 
     public static void init() {
-
-        if ( templateRepo != null && Play.mode == Play.Mode.PROD) {
-            return ;
-        }
 
         // Telling gt-engine that it should use the TagContext-impl in play 1 instead of its own
         GTTagContext.singleton = new GTTagContextBridge();
@@ -82,7 +68,7 @@ public class TemplateLoader {
     public static Template load(VirtualFile file) {
         // Use default engine
 
-        GTTemplateLocationReal templateLocation = null;
+        GTTemplateLocationReal templateLocation;
         try {
             templateLocation = new GTTemplateLocationReal(file.relativePath(), file.getRealFile().toURI().toURL());
         } catch (MalformedURLException e) {
@@ -213,14 +199,14 @@ public class TemplateLoader {
      * @return A list of executable templates
      */
     public static List<Template> getAllTemplate() {
-        List<Template> res = new ArrayList<Template>();
+        List<Template> res = new ArrayList<>();
         for (VirtualFile virtualFile : Play.templatesPath) {
             scan(res, virtualFile);
         }
         for (VirtualFile root : Play.roots) {
             VirtualFile vf = root.child("conf/routes");
             if (vf != null && vf.exists()) {
-                Template template = load(vf);
+                load(vf);
             }
         }
         return res;
