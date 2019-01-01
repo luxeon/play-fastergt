@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import play.Play;
 import play.cache.Cache;
 import play.data.validation.Validation;
-import play.i18n.Messages;
+import play.inject.RequireInjection;
 import play.modules.gtengineplugin.TemplateMessageSource;
 import play.mvc.Router;
 import play.template2.GTGroovyBase;
@@ -16,10 +16,9 @@ import play.templates.BaseTemplate;
 import play.utils.HTML;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Map;
 
-@Named
+@RequireInjection
 public abstract class GTJavaBase1xImpl extends GTJavaBase {
 
     @Inject
@@ -49,7 +48,7 @@ public abstract class GTJavaBase1xImpl extends GTJavaBase {
 
     @Override
     public boolean validationHasError(String key) {
-        return Validation.hasError( key );
+        return Validation.hasError(key);
     }
 
     @Override
@@ -64,7 +63,7 @@ public abstract class GTJavaBase1xImpl extends GTJavaBase {
 
     @Override
     public String convertRawDataToString(Object rawData) {
-        return ((BaseTemplate.RawData)rawData).data;
+        return ((BaseTemplate.RawData) rawData).data;
     }
 
     @Override
@@ -85,7 +84,7 @@ public abstract class GTJavaBase1xImpl extends GTJavaBase {
     @Override
     public void internalRenderTemplate(Map<String, Object> args, boolean startingNewRendering, GTJavaBase callingTemplate) throws GTTemplateNotFoundWithSourceInfo, GTRuntimeException {
         // make sure the old layoutData referees to the same in map-instance as what the new impl uses
-        BaseTemplate.layoutData.set( GTJavaBase.layoutData.get() );
+        BaseTemplate.layoutData.set(GTJavaBase.layoutData.get());
         super.internalRenderTemplate(args, startingNewRendering, callingTemplate);
     }
 
@@ -99,5 +98,5 @@ public abstract class GTJavaBase1xImpl extends GTJavaBase {
         Cache.set(key, data, duration);
     }
 
-    
+
 }

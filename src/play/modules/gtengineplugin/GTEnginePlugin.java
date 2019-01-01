@@ -71,8 +71,7 @@ public class GTEnginePlugin extends PlayPlugin {
             }
         }
 
-        Template t = TemplateLoader.load(file);
-        return t;
+        return TemplateLoader.load(file);
 
     }
 }

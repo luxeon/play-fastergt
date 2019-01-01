@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class GTJavaExtensionMethodResolver1x implements GTJavaExtensionMethodResolver {
 
-    private static Object lock = new Object();
+    private static final Object lock = new Object();
     private static ApplicationClassloaderState _lastKnownApplicationClassloaderState = null;
     private static Map<String, Class> methodName2ClassMapping = null;
 
@@ -21,7 +21,7 @@ public class GTJavaExtensionMethodResolver1x implements GTJavaExtensionMethodRes
         synchronized (lock) {
             if (_lastKnownApplicationClassloaderState == null || !_lastKnownApplicationClassloaderState.equals(Play.classloader.currentState) || methodName2ClassMapping == null) {
                 _lastKnownApplicationClassloaderState = Play.classloader.currentState;
-                List<Class> extensionsClassnames = new ArrayList<Class>(5);
+                List<Class> extensionsClassnames = new ArrayList<>(5);
                 extensionsClassnames.add(JavaExtensions.class);
                 try {
                     for ( String moduleExtensionName : Play.pluginCollection.addTemplateExtensions()) {
@@ -30,14 +30,12 @@ public class GTJavaExtensionMethodResolver1x implements GTJavaExtensionMethodRes
                     }
 
                     List<Class> extensionsClasses = Play.classloader.getAssignableClasses(JavaExtensions.class);
-                    for (Class extensionsClass : extensionsClasses) {
-                        extensionsClassnames.add(extensionsClass);
-                    }
+                    extensionsClassnames.addAll(extensionsClasses);
                 } catch (Throwable e) {
                     //
                 }
 
-                methodName2ClassMapping = new HashMap<String, Class>();
+                methodName2ClassMapping = new HashMap<>();
                 for ( Class clazz : extensionsClassnames) {
                     for ( Method method : clazz.getDeclaredMethods()) {
                         methodName2ClassMapping.put(method.getName(), clazz);

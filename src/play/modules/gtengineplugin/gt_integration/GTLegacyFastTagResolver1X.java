@@ -24,8 +24,8 @@ import java.util.Map;
 public class GTLegacyFastTagResolver1X implements GTLegacyFastTagResolver {
 
     private static class LegacyFastTag {
-        public final String className;
-        public final String methodName;
+        final String className;
+        final String methodName;
 
         private LegacyFastTag(String className, String methodName) {
             this.className = className;
@@ -33,21 +33,21 @@ public class GTLegacyFastTagResolver1X implements GTLegacyFastTagResolver {
         }
     }
 
-    private static Object lock = new Object();
+    private static final Object lock = new Object();
     private static ApplicationClassloaderState _lastKnownApplicationClassloaderState;
-    private static Map<String, LegacyFastTag> _tagName2FastTag = new HashMap<String, LegacyFastTag>();
+    private static Map<String, LegacyFastTag> _tagName2FastTag = new HashMap<>();
 
     private static Map<String, LegacyFastTag> getTagName2FastTag() {
         synchronized (lock) {
             if (_lastKnownApplicationClassloaderState == null || !_lastKnownApplicationClassloaderState.equals(Play.classloader.currentState)) {
                 // must reload
-                _tagName2FastTag = new HashMap<String, LegacyFastTag>();
+                _tagName2FastTag = new HashMap<>();
                 _lastKnownApplicationClassloaderState = Play.classloader.currentState;
 
                 // find all FastTag-classes
                 List<ApplicationClasses.ApplicationClass> _fastTagClasses = Play.classes.getAssignableClasses( FastTags.class );
 
-                List<Class> classes = new ArrayList<Class>(_fastTagClasses.size()+1);
+                List<Class> classes = new ArrayList<>(_fastTagClasses.size() + 1);
                 classes.add( InternalLegacyFastTagsImpls.class);
                 for (ApplicationClasses.ApplicationClass appClass : _fastTagClasses) {
                     classes.add( appClass.javaClass);
@@ -60,7 +60,6 @@ public class GTLegacyFastTagResolver1X implements GTLegacyFastTagResolver {
                         namespacePrefix = namespace.value() + ".";
                     }
                     for ( Method m : clazz.getDeclaredMethods()) {
-
                         if (m.getName().startsWith("_") && Modifier.isStatic(m.getModifiers()) ) {
                             String tagName = namespacePrefix + m.getName().substring(1);
                             _tagName2FastTag.put(tagName, new LegacyFastTag(clazz.getName(), m.getName()));

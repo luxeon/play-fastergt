@@ -1,16 +1,11 @@
 package play.modules.gtengineplugin.gt_integration;
 
-import play.Play;
-import play.classloading.ApplicationClassloaderState;
 import play.template2.GTGroovyBase;
 import play.template2.GTJavaBase;
 import play.template2.GTTemplateRepo;
 import play.template2.compile.GTPreCompiler;
 import play.template2.legacy.GTLegacyFastTagResolver;
-import play.templates.JavaExtensions;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

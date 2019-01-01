@@ -7,17 +7,13 @@ import play.template2.GTFastTag;
 import play.template2.GTFastTagResolver;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GTFastTagResolver1x implements GTFastTagResolver {
 
-    private static Object lock = new Object();
+    private static final Object lock = new Object();
     private static ApplicationClassloaderState _lastKnownApplicationClassloaderState = null;
     private static List<GTFastTag> fastTagClasses = null;
-
-
 
     public String resolveFastTag(String tagName) {
 
